@@ -1,4 +1,4 @@
-import 'package:animation_showcase/card_units.dart';
+import 'package:animation_showcase/card_unit.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -69,13 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Center(
-        child: Stack(
-          children: [
-            getCards(Colors.redAccent, 5.0),
-            getCards(Colors.greenAccent, 10.0),
-            getCards(Colors.blueAccent, 15.0),
-          ],
-        ),
+        child: FlipCard(color1: Colors.redAccent, color2: Colors.purpleAccent)
       ),
     );
   }
