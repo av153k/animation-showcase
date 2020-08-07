@@ -33,27 +33,23 @@ class _FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Center(
-          child: Transform(
-            alignment: FractionalOffset.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(pi * _animation.value),
-            child: GestureDetector(
-              onTap: () {
-                if (_animationStatus == AnimationStatus.dismissed) {
-                  _animationController.forward();
-                } else {
-                  _animationController.reverse();
-                }
-              },
-              child: _animation.value <= 0.5
-                  ? getCards(widget.color1)
-                  : getCards(widget.color2),
-            ),
-          ),
+    return Center(
+      child: Transform(
+        alignment: FractionalOffset.center,
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.001)
+          ..rotateY(pi * _animation.value),
+        child: GestureDetector(
+          onTap: () {
+            if (_animationStatus == AnimationStatus.dismissed) {
+              _animationController.forward();
+            } else {
+              _animationController.reverse();
+            }
+          },
+          child: _animation.value <= 0.5
+              ? getCards(widget.color1)
+              : getCards(widget.color2),
         ),
       ),
     );

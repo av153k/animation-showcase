@@ -1,4 +1,6 @@
+import 'package:animation_showcase/card_stack.dart';
 import 'package:animation_showcase/card_unit.dart';
+import 'package:animation_showcase/constants.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -51,6 +53,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int currentIndex;
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -60,17 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(
-          widget.title,
-          style: TextStyle(color: Colors.black),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          title: Text(
+            widget.title,
+            style: TextStyle(color: Colors.black),
+          ),
         ),
-      ),
-      body: Center(
-        child: FlipCard(color1: Colors.redAccent, color2: Colors.purpleAccent)
-      ),
-    );
+        body: CardStack());
   }
 }
