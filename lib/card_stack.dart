@@ -1,7 +1,8 @@
+import 'package:animation_showcase/draggable_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'card_unit.dart';
+import 'flip_card.dart';
 
 class CardStack extends StatefulWidget {
   @override
@@ -9,13 +10,8 @@ class CardStack extends StatefulWidget {
 }
 
 class _CardStackState extends State<CardStack> {
+  double _nextCardScale;
   List<Widget> cardsList;
-
-  void _showNext(index) {
-    setState(() {
-      cardsList.removeAt(index);
-    });
-  }
 
   @override
   void initState() {
@@ -33,6 +29,20 @@ class _CardStackState extends State<CardStack> {
     );
   }
 
+  void _onSlideUpdate(double distance){
+    setState(() {
+      _nextCardScale = 0.9 + (0.1 * (distance / 100.0)).clamp(0.0, 0.1);
+    });
+  }
+
+  Widget _buildBackCard(){
+    return new Transform(
+      transform: new Matrix4.identity()..scale(_nextCardScale, _nextCardScale),
+      alignment: Alignment.center,
+      child: Card()
+    );
+  }
+
   List<Widget> _stackCards() {
     List<FlipCard> _flipCards = [
       FlipCard(color1: Colors.redAccent, color2: Colors.purpleAccent),
@@ -47,15 +57,9 @@ class _CardStackState extends State<CardStack> {
       cards.add(
         Positioned(
           top: margins[x],
-          child: Draggable(
-              onDragEnd: (drag) {
-                _showNext(x);
-              },
-              childWhenDragging: Container(
-                color: Colors.transparent,
-              ),
-              child: _flipCards[x],
-              feedback: _flipCards[x]),
+          child: DraggableCard(
+            card: _flipCards[x],
+          ),
         ),
       );
     }

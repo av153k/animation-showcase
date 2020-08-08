@@ -1,7 +1,8 @@
 import 'package:animation_showcase/card_stack.dart';
-import 'package:animation_showcase/card_unit.dart';
-import 'package:animation_showcase/constants.dart';
+import 'package:animation_showcase/draggable_card.dart';
+import 'package:animation_showcase/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'constants.dart';
 
 void main() {
   runApp(MyApp());
@@ -70,7 +71,28 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: CardStack(),
+      body: Center(
+        child: Stack(
+          children: [
+            DraggableCard(
+              card:
+                  FlipCard(color1: Colors.redAccent, color2: Colors.pinkAccent),
+            ),
+            DraggableCard(
+              card: FlipCard(
+                  color1: Colors.blueAccent, color2: Colors.purpleAccent),
+            ),
+            DraggableCard(
+              card: FlipCard(
+                  color1: Colors.deepOrangeAccent, color2: Colors.pinkAccent),
+            ),
+            DraggableCard(
+              card: FlipCard(
+                  color1: Colors.amberAccent, color2: Colors.pinkAccent),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
