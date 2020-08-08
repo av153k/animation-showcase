@@ -8,7 +8,12 @@ class FlipCard extends StatefulWidget {
   _FlipCardState createState() => _FlipCardState();
   final Color color1;
   final Color color2;
-  FlipCard({@required this.color1, @required this.color2});
+
+  FlipCard({
+    Key key,
+    @required this.color1,
+    this.color2,
+  }) : super(key: key);
 }
 
 class _FlipCardState extends State<FlipCard>
@@ -48,8 +53,8 @@ class _FlipCardState extends State<FlipCard>
             }
           },
           child: _animation.value <= 0.5
-              ? getCards(widget.color1)
-              : getCards(widget.color2),
+              ? getCards(widget.color1, context)
+              : getCards(widget.color2, context),
         ),
       ),
     );

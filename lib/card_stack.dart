@@ -48,7 +48,6 @@ class _CardStackState extends State<CardStack> {
         Positioned(
           top: margins[x],
           child: Draggable(
-              dragAnchor: DragAnchor.child,
               onDragEnd: (drag) {
                 _showNext(x);
               },

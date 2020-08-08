@@ -1,17 +1,17 @@
 import 'package:animation_showcase/card_unit.dart';
 import 'package:flutter/material.dart';
 
-Widget getCards(Color color1) {
+Widget getCards(Color color1, BuildContext context) {
   return Container(
-    height: 300,
-    width: 200,
+    height: MediaQuery.of(context).size.height*0.6,
+    width: MediaQuery.of(context).size.width*0.8,
     child: Card(
       color: color1,
       elevation: 12,
       child: Center(
         child: Container(
-          height: 300,
-          width: 200,
+          height: MediaQuery.of(context).size.height*0.6,
+          width: MediaQuery.of(context).size.width*0.8,
         ),
       ),
     ),
