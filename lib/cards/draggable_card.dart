@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:animation_showcase/constants.dart';
+import 'package:animation_showcase/assets/constants.dart';
 import 'package:flutter/material.dart';
 
-import 'card_stack.dart';
+import '../card_stack/card_stack.dart';
 
 class DraggableCard extends StatefulWidget {
   final Widget frontCard;

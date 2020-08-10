@@ -1,9 +1,9 @@
-import 'package:animation_showcase/draggable_card.dart';
+import 'package:animation_showcase/cards/draggable_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'decisions.dart';
-import 'main_cards.dart';
+import '../cards_choices/decisions.dart';
+import '../cards/main_cards.dart';
 
 class CardStack extends StatefulWidget {
   final ChoiceEngine choiceEngine;
@@ -22,8 +22,8 @@ class _CardStackState extends State<CardStack> {
   double _nextCardScale = 0.9;
   double _thirdCardScale = 0.8;
   double _thirdCardMargin = 0;
-  double _backCardMargin = 50;
-  double _frontCardMargin = 100;
+  double _backCardMargin = 10;
+  double _frontCardMargin = 20;
 
   @override
   void initState() {

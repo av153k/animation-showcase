@@ -1,4 +1,4 @@
-import 'package:animation_showcase/card_contents.dart';
+import 'package:animation_showcase/cards_choices/card_contents.dart';
 import 'package:flutter/widgets.dart';
 
 class ChoiceEngine extends ChangeNotifier {

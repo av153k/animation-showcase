@@ -1,8 +1,8 @@
-import 'package:animation_showcase/card_contents.dart';
-import 'package:animation_showcase/card_stack.dart';
+import 'package:animation_showcase/cards_choices/card_contents.dart';
+import 'package:animation_showcase/card_stack/card_stack.dart';
 import 'package:flutter/material.dart';
 
-import 'decisions.dart';
+import 'cards_choices/decisions.dart';
 
 void main() {
   runApp(MyApp());
