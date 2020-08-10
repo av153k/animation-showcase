@@ -19,11 +19,11 @@ class CardStack extends StatefulWidget {
 class _CardStackState extends State<CardStack> {
   Key _frontCard;
   ChoiceClass _currentChoice;
-  double _nextCardScale = 0.9;
-  double _thirdCardScale = 0.8;
+  double _nextCardScale = 0.95;
+  double _thirdCardScale = 0.9;
   double _thirdCardMargin = 0;
-  double _backCardMargin = 10;
-  double _frontCardMargin = 20;
+  double _backCardMargin = 20;
+  double _frontCardMargin = 40;
 
   @override
   void initState() {
@@ -126,8 +126,8 @@ class _CardStackState extends State<CardStack> {
 
   void _onSlideUpdate(double distance) {
     setState(() {
-      _nextCardScale = 0.9 + (0.1 * (distance / 100.0)).clamp(0.0, 0.1);
-      _thirdCardScale = 0.8 + (0.1 * (distance / 100.0)).clamp(0.0, 0.1);
+      _nextCardScale = 0.95 + (0.05 * (distance / 100.0)).clamp(0.0, 0.05);
+      _thirdCardScale = 0.9 + (0.05 * (distance / 100.0)).clamp(0.0, 0.05);
     });
   }
 
@@ -147,8 +147,8 @@ class _CardStackState extends State<CardStack> {
     }
 
     setState(() {
-      _nextCardScale = 0.9;
-      _thirdCardScale = 0.8;
+      _nextCardScale = 0.95;
+      _thirdCardScale = 0.9;
     });
 
     widget.choiceEngine.cycleChoice();

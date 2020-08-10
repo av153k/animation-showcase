@@ -68,7 +68,7 @@ class _DraggableCardState extends State<DraggableCard>
         duration: const Duration(milliseconds: 1000), vsync: this)
       ..addListener(() => setState(() {
             cardOffset = Offset.lerp(slideBackStart, const Offset(0.0, 0.0),
-                Curves.elasticOut.transform(slideBackAnimation.value));
+                Curves.ease.transform(slideBackAnimation.value));
 
             if (widget.onSlideUpdate != null) {
               widget.onSlideUpdate(cardOffset.distance);
