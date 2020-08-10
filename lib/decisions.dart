@@ -5,24 +5,28 @@ class ChoiceEngine extends ChangeNotifier {
   final List<ChoiceClass> _choices;
   int _currentChoiceIndex;
   int _nextChoiceIndex;
+  int _thirdChoiceIndex;
 
   ChoiceEngine({
     List<ChoiceClass> choices,
   }) : _choices = choices {
     _currentChoiceIndex = 0;
     _nextChoiceIndex = 1;
+    _thirdChoiceIndex = 2;
   }
 
   ChoiceClass get currentChoice => _choices[_currentChoiceIndex];
   ChoiceClass get nextChoice => _choices[_nextChoiceIndex];
+  ChoiceClass get thirdChoice => _choices[_thirdChoiceIndex];
 
   void cycleChoice() {
     if (currentChoice.choice != Choices.undecided) {
       currentChoice.reset();
 
       _currentChoiceIndex = _nextChoiceIndex;
-      _nextChoiceIndex =
-          _nextChoiceIndex < _choices.length - 1 ? _nextChoiceIndex + 1 : 0;
+      _nextChoiceIndex = _thirdChoiceIndex;
+      _thirdChoiceIndex =
+          _thirdChoiceIndex < _choices.length - 2 ? _thirdChoiceIndex + 1 : 0;
       notifyListeners();
     }
   }

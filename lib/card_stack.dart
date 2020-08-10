@@ -20,8 +20,10 @@ class _CardStackState extends State<CardStack> {
   Key _frontCard;
   ChoiceClass _currentChoice;
   double _nextCardScale = 0.9;
-  double _backCardMargin = 0;
-  double _frontCardMargin = 50;
+  double _thirdCardScale = 0.8;
+  double _thirdCardMargin = 0;
+  double _backCardMargin = 50;
+  double _frontCardMargin = 100;
 
   @override
   void initState() {
@@ -81,6 +83,17 @@ class _CardStackState extends State<CardStack> {
     setState(() {});
   }
 
+  Widget _buildThirdCard() {
+    return new Transform(
+      transform: new Matrix4.identity()
+        ..scale(_thirdCardScale, _thirdCardScale),
+      alignment: Alignment.center,
+      child: new MainCard(
+        color: widget.choiceEngine.thirdChoice.card.color,
+      ),
+    );
+  }
+
   Widget _buildBackCard() {
     return new Transform(
       transform: new Matrix4.identity()..scale(_nextCardScale, _nextCardScale),
@@ -114,6 +127,7 @@ class _CardStackState extends State<CardStack> {
   void _onSlideUpdate(double distance) {
     setState(() {
       _nextCardScale = 0.9 + (0.1 * (distance / 100.0)).clamp(0.0, 0.1);
+      _thirdCardScale = 0.8 + (0.1 * (distance / 100.0)).clamp(0.0, 0.1);
     });
   }
 
@@ -134,6 +148,7 @@ class _CardStackState extends State<CardStack> {
 
     setState(() {
       _nextCardScale = 0.9;
+      _thirdCardScale = 0.8;
     });
 
     widget.choiceEngine.cycleChoice();
@@ -143,6 +158,15 @@ class _CardStackState extends State<CardStack> {
   Widget build(BuildContext context) {
     return new Stack(
       children: <Widget>[
+        Positioned(
+          top: _thirdCardMargin,
+          child: DraggableCard(
+            backCard: MainCard(color: Colors.amber),
+            frontCard: _buildThirdCard(),
+            isDraggable: false,
+            isFrontCard: false,
+          ),
+        ),
         Positioned(
           top: _backCardMargin,
           child: DraggableCard(
