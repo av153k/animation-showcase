@@ -1,12 +1,18 @@
+import 'package:animation_showcase/card_contents.dart';
 import 'package:animation_showcase/card_stack.dart';
-import 'package:animation_showcase/draggable_card.dart';
-import 'package:animation_showcase/flip_card.dart';
 import 'package:flutter/material.dart';
-import 'constants.dart';
+
+import 'decisions.dart';
 
 void main() {
   runApp(MyApp());
 }
+
+final ChoiceEngine choiceEngine = new ChoiceEngine(
+  choices: demoCards.map((CardData card) {
+    return new ChoiceClass(card: card);
+  }).toList(),
+);
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -71,27 +77,8 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: Center(
-        child: Stack(
-          children: [
-            DraggableCard(
-              card:
-                  FlipCard(color1: Colors.redAccent, color2: Colors.pinkAccent),
-            ),
-            DraggableCard(
-              card: FlipCard(
-                  color1: Colors.blueAccent, color2: Colors.purpleAccent),
-            ),
-            DraggableCard(
-              card: FlipCard(
-                  color1: Colors.deepOrangeAccent, color2: Colors.pinkAccent),
-            ),
-            DraggableCard(
-              card: FlipCard(
-                  color1: Colors.amberAccent, color2: Colors.pinkAccent),
-            ),
-          ],
-        ),
+      body: CardStack(
+        choiceEngine: choiceEngine,
       ),
     );
   }
