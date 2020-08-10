@@ -21,7 +21,7 @@ class _CardStackState extends State<CardStack> {
   ChoiceClass _currentChoice;
   double _nextCardScale = 0.9;
   double _backCardMargin = 0;
-  double _frontCardMargin = 0;
+  double _frontCardMargin = 50;
 
   @override
   void initState() {
@@ -131,6 +131,10 @@ class _CardStackState extends State<CardStack> {
         currentChoice.superLike();
         break;
     }
+
+    setState(() {
+      _nextCardScale = 0.9;
+    });
 
     widget.choiceEngine.cycleChoice();
   }
