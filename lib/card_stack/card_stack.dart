@@ -1,3 +1,4 @@
+import 'package:animation_showcase/assets/constants.dart';
 import 'package:animation_showcase/cards/draggable_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -24,6 +25,7 @@ class _CardStackState extends State<CardStack> {
   double _thirdCardMargin = 0;
   double _backCardMargin = 20;
   double _frontCardMargin = 40;
+  double iconOpacity = 0;
 
   @override
   void initState() {
@@ -89,7 +91,7 @@ class _CardStackState extends State<CardStack> {
         ..scale(_thirdCardScale, _thirdCardScale),
       alignment: Alignment.center,
       child: new MainCard(
-        color: widget.choiceEngine.thirdChoice.card.color,
+        name: widget.choiceEngine.thirdChoice.card.name,
       ),
     );
   }
@@ -99,16 +101,14 @@ class _CardStackState extends State<CardStack> {
       transform: new Matrix4.identity()..scale(_nextCardScale, _nextCardScale),
       alignment: Alignment.center,
       child: new MainCard(
-        color: widget.choiceEngine.nextChoice.card.color,
+        name: widget.choiceEngine.nextChoice.card.name,
       ),
     );
   }
 
   Widget _buildFrontCard() {
     return new MainCard(
-      key: _frontCard,
-      color: widget.choiceEngine.currentChoice.card.color,
-    );
+        key: _frontCard, name: widget.choiceEngine.currentChoice.card.name);
   }
 
   SlideDirection _desiredSlideOutDirection() {
@@ -124,10 +124,13 @@ class _CardStackState extends State<CardStack> {
     }
   }
 
-  void _onSlideUpdate(double distance) {
+  void _onSlideUpdate(double distance, SlideDirection _slideDirection) {
     setState(() {
       _nextCardScale = 0.95 + (0.05 * (distance / 100.0)).clamp(0.0, 0.05);
       _thirdCardScale = 0.9 + (0.05 * (distance / 100.0)).clamp(0.0, 0.05);
+
+      //slide out choice icon opacity control
+      iconOpacity = 0.0 + (1 * (distance / 100)).clamp(0.0, 1);
     });
   }
 
@@ -149,6 +152,7 @@ class _CardStackState extends State<CardStack> {
     setState(() {
       _nextCardScale = 0.95;
       _thirdCardScale = 0.9;
+      iconOpacity = 0.0;
     });
 
     widget.choiceEngine.cycleChoice();
@@ -161,7 +165,7 @@ class _CardStackState extends State<CardStack> {
         Positioned(
           top: _thirdCardMargin,
           child: DraggableCard(
-            backCard: MainCard(color: Colors.amber),
+            backCard: MainCard(name: "Back"),
             frontCard: _buildThirdCard(),
             isDraggable: false,
             isFrontCard: false,
@@ -170,7 +174,7 @@ class _CardStackState extends State<CardStack> {
         Positioned(
           top: _backCardMargin,
           child: DraggableCard(
-            backCard: MainCard(color: Colors.amber),
+            backCard: MainCard(name: "Back"),
             frontCard: _buildBackCard(),
             isDraggable: false,
             isFrontCard: false,
@@ -179,8 +183,9 @@ class _CardStackState extends State<CardStack> {
         Positioned(
           top: _frontCardMargin,
           child: DraggableCard(
+            iconOpacity: iconOpacity,
             isFrontCard: true,
-            backCard: MainCard(color: Colors.amber),
+            backCard: MainCard(name: "Back"),
             frontCard: _buildFrontCard(),
             slideTo: _desiredSlideOutDirection(),
             onSlideUpdate: _onSlideUpdate,

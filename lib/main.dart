@@ -70,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
+        primary: true,
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(

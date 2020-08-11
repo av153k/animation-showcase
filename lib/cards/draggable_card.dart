@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:animation_showcase/assets/constants.dart';
 import 'package:flutter/material.dart';
-
 import '../card_stack/card_stack.dart';
 
 class DraggableCard extends StatefulWidget {
@@ -10,9 +8,10 @@ class DraggableCard extends StatefulWidget {
   final Widget backCard;
   final bool isDraggable;
   final SlideDirection slideTo;
-  final Function(double distance) onSlideUpdate;
+  final Function(double distance, SlideDirection _slideDirection) onSlideUpdate;
   final Function(SlideDirection direction) onSlideOutComplete;
   final bool isFrontCard;
+  double iconOpacity;
 
   DraggableCard({
     this.frontCard,
@@ -22,6 +21,7 @@ class DraggableCard extends StatefulWidget {
     this.onSlideUpdate,
     this.onSlideOutComplete,
     this.isFrontCard,
+    this.iconOpacity = 0.0,
   });
 
   @override
@@ -42,14 +42,16 @@ class _DraggableCardState extends State<DraggableCard>
   AnimationController _flipAnimationController;
   Animation _flipAnimationValue;
   AnimationStatus _flipAnimationStatus = AnimationStatus.dismissed;
-  bool _isGoingLeft;
-  bool _decisionVisibility;
+  Color iconColor = Colors.transparent;
+  String iconText = "Filler";
+  double iconOpacity = 0;
+  Duration iconDuration = Duration(milliseconds: 0);
+  double left = 0;
+  double top = 0;
 
   @override
   void initState() {
     super.initState();
-    _isGoingLeft = false;
-    _decisionVisibility = false;
 
     _flipAnimationController = AnimationController(
       vsync: this,
@@ -71,7 +73,7 @@ class _DraggableCardState extends State<DraggableCard>
                 Curves.ease.transform(slideBackAnimation.value));
 
             if (widget.onSlideUpdate != null) {
-              widget.onSlideUpdate(cardOffset.distance);
+              widget.onSlideUpdate(cardOffset.distance, slideOutDirection);
             }
           }))
       ..addStatusListener((AnimationStatus status) {
@@ -93,7 +95,7 @@ class _DraggableCardState extends State<DraggableCard>
           cardOffset = slideOutTween.evaluate(slideOutAnimation);
 
           if (widget.onSlideUpdate != null) {
-            widget.onSlideUpdate(cardOffset.distance);
+            widget.onSlideUpdate(cardOffset.distance, slideOutDirection);
           }
         });
       })
@@ -126,10 +128,6 @@ class _DraggableCardState extends State<DraggableCard>
       switch (widget.slideTo) {
         case SlideDirection.left:
           _slideLeft();
-          setState(() {
-            _isGoingLeft = true;
-            _decisionVisibility = true;
-          });
           break;
         case SlideDirection.right:
           _slideRight();
@@ -182,6 +180,8 @@ class _DraggableCardState extends State<DraggableCard>
     return new Offset(cardContext.size.width / 2 + cardTopLeft.dx, dragStartY);
   }
 
+
+
   void _onPanStart(DragStartDetails details) {
     if (widget.isDraggable) {
       dragStart = details.globalPosition;
@@ -197,11 +197,24 @@ class _DraggableCardState extends State<DraggableCard>
       if (widget.isDraggable) {
         dragPosition = details.globalPosition;
         cardOffset = dragPosition - dragStart;
+        left = details.delta.dx;
+        top = details.delta.dy;
+
+        if (left > 0) {
+          iconColor = Colors.green;
+          iconText = "LIKE";
+        } else if (left < 0) {
+          iconColor = Colors.red;
+          iconText = "Nope";
+        } else if (top < 0) {
+          iconColor = Colors.blue;
+          iconText = "SUPER LIKE";
+        }
       }
     });
 
     if (widget.onSlideUpdate != null) {
-      widget.onSlideUpdate(cardOffset.distance);
+      widget.onSlideUpdate(cardOffset.distance, slideOutDirection);
     }
   }
 
@@ -258,67 +271,42 @@ class _DraggableCardState extends State<DraggableCard>
       key: globalKey,
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return OverlayBuilder(
-            showOverlay: true,
-            overlayBuilder: (BuildContext overlayContext) {
-              RenderBox box = context.findRenderObject() as RenderBox;
-              final topLeft = box.size.topLeft(box.localToGlobal(cardOffset));
-              final bottomRight =
-                  box.size.bottomRight(box.localToGlobal(cardOffset));
-              final Rect anchorBounds = new Rect.fromLTRB(
-                topLeft.dx,
-                topLeft.dy,
-                bottomRight.dx,
-                bottomRight.dy,
-              );
-              final anchorCenter = box.size.center(topLeft);
-              return Positioned(
-                left: anchorCenter.dx,
-                top: anchorCenter.dy,
-                child: FractionalTranslation(
-                  translation: const Offset(-0.5, -0.5),
-                  child: Transform(
-                    transform: new Matrix4.translationValues(
-                        cardOffset.dx, cardOffset.dy, 0.0)
-                      ..rotateZ(_rotation(anchorBounds)),
-                    origin: _rotationOrigin(anchorBounds),
-                    child: new Transform(
-                      alignment: FractionalOffset.center,
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateY(pi * _flipAnimationValue.value),
-                      child: Container(
-                        width: anchorBounds.width,
-                        height: anchorBounds.height,
-                        padding: const EdgeInsets.all(16.0),
-                        child: new GestureDetector(
-                          onTap: () {
-                            if (widget.isFrontCard) {
-                              if (_flipAnimationStatus ==
-                                  AnimationStatus.dismissed) {
-                                _flipAnimationController.forward();
-                              } else {
-                                _flipAnimationController.reverse();
-                              }
-                            }
-                          },
-                          onPanStart: _onPanStart,
-                          onPanUpdate: _onPanUpdate,
-                          onPanEnd: _onPanEnd,
-                          child: createCard(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-            child: Center(),
-          );
-        },
-      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final anchorBounds =
+            cardOffset & Size(constraints.maxWidth, constraints.maxHeight);
+        return Transform(
+          transform:
+              new Matrix4.translationValues(cardOffset.dx, cardOffset.dy, 0.0)
+                ..rotateZ(_rotation(anchorBounds)),
+          origin: _rotationOrigin(anchorBounds),
+          child: new Transform(
+            alignment: FractionalOffset.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(pi * _flipAnimationValue.value),
+            child: Container(
+              width: anchorBounds.width,
+              height: anchorBounds.height,
+              padding: const EdgeInsets.all(16.0),
+              child: new GestureDetector(
+                onTap: () {
+                  if (widget.isFrontCard) {
+                    if (_flipAnimationStatus == AnimationStatus.dismissed) {
+                      _flipAnimationController.forward();
+                    } else {
+                      _flipAnimationController.reverse();
+                    }
+                  }
+                },
+                onPanStart: _onPanStart,
+                onPanUpdate: _onPanUpdate,
+                onPanEnd: _onPanEnd,
+                child: createCard(),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -333,118 +321,21 @@ class _DraggableCardState extends State<DraggableCard>
   }
 
   Widget createCard() {
-    Color color = _isGoingLeft ? Colors.green : Colors.red;
-    String text = _isGoingLeft ? "Like" : "Nope";
     return Stack(
       alignment: Alignment.topCenter,
       children: [
         _flipControl(),
         Positioned(
           left: 50,
-          top: 200,
+          top: 20,
           child: getIcon(
-            color,
-            text,
-            _decisionVisibility,
-            Duration(milliseconds: 500),
+            iconColor,
+            iconText,
+            widget.iconOpacity,
+            iconDuration,
           ),
         ),
       ],
     );
-  }
-}
-
-class OverlayBuilder extends StatefulWidget {
-  final bool showOverlay;
-  final Widget Function(BuildContext) overlayBuilder;
-  final Widget child;
-
-  OverlayBuilder({
-    key,
-    this.showOverlay = false,
-    this.overlayBuilder,
-    this.child,
-  }) : super(key: key);
-
-  @override
-  _OverlayBuilderState createState() => new _OverlayBuilderState();
-}
-
-class _OverlayBuilderState extends State<OverlayBuilder> {
-  OverlayEntry overlayEntry;
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.showOverlay) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => showOverlay());
-    }
-  }
-
-  @override
-  void didUpdateWidget(OverlayBuilder oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    WidgetsBinding.instance.addPostFrameCallback((_) => syncWidgetAndOverlay());
-  }
-
-  @override
-  void reassemble() {
-    super.reassemble();
-    WidgetsBinding.instance.addPostFrameCallback((_) => syncWidgetAndOverlay());
-  }
-
-  @override
-  void dispose() {
-    if (isShowingOverlay()) {
-      hideOverlay();
-    }
-
-    super.dispose();
-  }
-
-  bool isShowingOverlay() => overlayEntry != null;
-
-  void showOverlay() {
-    if (overlayEntry == null) {
-      // Create the overlay.
-      overlayEntry = new OverlayEntry(
-        builder: widget.overlayBuilder,
-      );
-      addToOverlay(overlayEntry);
-    } else {
-      // Rebuild overlay.
-      buildOverlay();
-    }
-  }
-
-  void addToOverlay(OverlayEntry entry) async {
-    Overlay.of(context).insert(entry);
-  }
-
-  void hideOverlay() {
-    if (overlayEntry != null) {
-      overlayEntry.remove();
-      overlayEntry = null;
-    }
-  }
-
-  void syncWidgetAndOverlay() {
-    if (isShowingOverlay() && !widget.showOverlay) {
-      hideOverlay();
-    } else if (!isShowingOverlay() && widget.showOverlay) {
-      showOverlay();
-    }
-  }
-
-  void buildOverlay() async {
-    overlayEntry?.markNeedsBuild();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => buildOverlay());
-
-    return widget.child;
   }
 }
