@@ -11,7 +11,7 @@ class DraggableCard extends StatefulWidget {
   final Function(double distance, SlideDirection _slideDirection) onSlideUpdate;
   final Function(SlideDirection direction) onSlideOutComplete;
   final bool isFrontCard;
-  double iconOpacity;
+  final double iconOpacity;
 
   DraggableCard({
     this.frontCard,
@@ -48,6 +48,8 @@ class _DraggableCardState extends State<DraggableCard>
   Duration iconDuration = Duration(milliseconds: 0);
   double left = 0;
   double top = 0;
+  double _topMargin = 0;
+  double _leftmargin = 0;
 
   @override
   void initState() {
@@ -180,8 +182,6 @@ class _DraggableCardState extends State<DraggableCard>
     return new Offset(cardContext.size.width / 2 + cardTopLeft.dx, dragStartY);
   }
 
-
-
   void _onPanStart(DragStartDetails details) {
     if (widget.isDraggable) {
       dragStart = details.globalPosition;
@@ -200,15 +200,29 @@ class _DraggableCardState extends State<DraggableCard>
         left = details.delta.dx;
         top = details.delta.dy;
 
+        double _height = MediaQuery.of(context).size.height;
+        double _width = MediaQuery.of(context).size.width;
+
         if (left > 0) {
           iconColor = Colors.green;
           iconText = "LIKE";
+          _topMargin = 20;
+          _leftmargin = 50;
         } else if (left < 0) {
           iconColor = Colors.red;
           iconText = "Nope";
+          _topMargin = 20;
+          _leftmargin = 250;
         } else if (top < 0) {
           iconColor = Colors.blue;
           iconText = "SUPER LIKE";
+          _topMargin = 350;
+          _leftmargin = 125;
+        } else {
+          iconColor = Colors.white;
+          iconText = "FILLER";
+          _topMargin = 20;
+          _leftmargin = 50;
         }
       }
     });
@@ -316,7 +330,10 @@ class _DraggableCardState extends State<DraggableCard>
     } else {
       return _flipAnimationValue.value <= 0.5
           ? widget.frontCard
-          : widget.backCard;
+          : Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(pi),
+              child: widget.backCard);
     }
   }
 
@@ -325,16 +342,31 @@ class _DraggableCardState extends State<DraggableCard>
       alignment: Alignment.topCenter,
       children: [
         _flipControl(),
-        Positioned(
-          left: 50,
-          top: 20,
-          child: getIcon(
-            iconColor,
-            iconText,
-            widget.iconOpacity,
-            iconDuration,
-          ),
-        ),
+        _flipAnimationValue.value <= 0.5
+            ? Positioned(
+                top: _topMargin,
+                left: _leftmargin,
+                child: getIcon(
+                  iconColor,
+                  iconText,
+                  widget.iconOpacity,
+                  iconDuration,
+                ),
+              )
+            : Positioned(
+                top: _topMargin,
+                left: _leftmargin,
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(pi),
+                  child: getIcon(
+                    iconColor,
+                    iconText,
+                    widget.iconOpacity,
+                    iconDuration,
+                  ),
+                ),
+              ),
       ],
     );
   }
