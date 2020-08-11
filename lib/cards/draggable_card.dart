@@ -200,9 +200,6 @@ class _DraggableCardState extends State<DraggableCard>
         left = details.delta.dx;
         top = details.delta.dy;
 
-        double _height = MediaQuery.of(context).size.height;
-        double _width = MediaQuery.of(context).size.width;
-
         if (left > 0) {
           iconColor = Colors.green;
           iconText = "LIKE";
