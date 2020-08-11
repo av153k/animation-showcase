@@ -1,4 +1,3 @@
-import 'package:animation_showcase/assets/constants.dart';
 import 'package:animation_showcase/cards/draggable_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
